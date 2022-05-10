@@ -8,62 +8,66 @@ public class snake {
     // Условимся, что currentPosition[0] - это координата змейки по вертикали,
     // а currentPosition[1] - это координата змейки по горизонтали
     static int[] currentPosition = new int[2];
-    static int[] TPosition = new int[2];
+    static int[] TPos = new int[2];
     static String[][] field;
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String direction;
 
         field = buildField(10, 10);
         printField(field);
-        String direction;
         System.out.println("Любой символ для начала");
+        int tx = T();
+
         while (!(direction = reader.readLine()).equalsIgnoreCase("Exit")) {
+            field[TPos[0]][TPos[1]] = " T ";
             int cubeValue = rollCube();
             System.out.println("Направление");
-            direction= reader.readLine();
-            if (direction.equals("")){return;}
+            direction = reader.readLine();
             move(cubeValue, direction);
+            if (TPos[0] == currentPosition[0] && TPos[1] == currentPosition[1]) {
+                field[currentPosition[0]][currentPosition[1]] = " X ";
+                tx = T();
+            }
             printField(field);
 
-            System.out.println("'roll' для продолжения");
+            System.out.println("Любой символ для продолжения");
         }
     }
+
     static void move(int cubeValue, String direction) {
+        int fl = field.length;
         int oldVertical = currentPosition[0];
         int oldHorizontal = currentPosition[1];
-        int oTVertical = TPosition[0];
-        int oTHorizontal =TPosition[1];
+        int oTVertical = TPos[0];
+        int oTHorizontal = TPos[1];
         field[oldVertical][oldHorizontal] = " . ";
-        field[oTVertical][oTHorizontal]=" . ";
 
         if (direction.equalsIgnoreCase("right")) {
-
-            int cp = currentPosition[1] + cubeValue;
-                if(cp > field.length) {
-                    //System.out.println("!!!!!!");
-                    currentPosition[1] = cp - field.length;
-                }else currentPosition[1]=cp;
-            /*TPosition[0]=TPosition[0]+cubeValue;
-            TPosition[1]=TPosition[1]+cubeValue;*/
+            oldHorizontal = currentPosition[1] + cubeValue;
+            if (oldHorizontal > fl - 1) currentPosition[1] = oldHorizontal - fl;
+            else currentPosition[1] = oldHorizontal;
             field[currentPosition[0]][currentPosition[1]] = " o ";
-            //field[TPosition[0]][TPosition[1]]=" T ";
         }
-       /* if (direction.equalsIgnoreCase("down")) {
-            currentPosition[0] = currentPosition[0] + cubeValue;
+        if (direction.equalsIgnoreCase("down")) {
+            oldVertical = currentPosition[0] + cubeValue;
+            if (oldVertical > fl - 1) currentPosition[0] = oldVertical - fl;
+            else currentPosition[0] = oldVertical;
             field[currentPosition[0]][currentPosition[1]] = " o ";
-            field[TPosition[0]+cubeValue][TPosition[1]+cubeValue]=" T ";
         }
         if (direction.equalsIgnoreCase("up")) {
-            currentPosition[0] = currentPosition[0] - cubeValue;
+            oldVertical = currentPosition[0] - cubeValue;
+            if (oldVertical < 0) currentPosition[0] = oldVertical + fl;
+            else currentPosition[0] = oldVertical;
             field[currentPosition[0]][currentPosition[1]] = " o ";
-            field[TPosition[0]+cubeValue][TPosition[1]+cubeValue]=" T ";
         }
         if (direction.equalsIgnoreCase("left")) {
-            currentPosition[1] = currentPosition[1] - cubeValue;
+            oldHorizontal = currentPosition[1] - cubeValue;
+            if (oldHorizontal < 0) currentPosition[1] = oldHorizontal + fl;
+            else currentPosition[1] = oldHorizontal;
             field[currentPosition[0]][currentPosition[1]] = " o ";
-            field[TPosition[0]+cubeValue][TPosition[1]+cubeValue]=" T ";
-        }*/
+        }
     }
 
     static int rollCube() {
@@ -71,6 +75,15 @@ public class snake {
         int cubeValue = random.nextInt(7);
         System.out.println(cubeValue);
         return cubeValue;
+    }
+
+    static int T() {
+        Random rnd = new Random();
+        int tx = rnd.nextInt(field.length);
+        System.out.println(tx);
+        TPos[0] = tx;
+        TPos[1] = tx;
+        return tx;
     }
 
     static String[][] buildField(int width, int height) {
