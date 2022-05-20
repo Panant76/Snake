@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Random;
 
 public class snake {
@@ -18,9 +19,9 @@ public class snake {
         field = buildField(10, 10);
         printField(field);
         System.out.println("Любой символ для начала");
-        int tx = T();
 
-        while (!(direction = reader.readLine()).equalsIgnoreCase("Exit")) {
+
+        while (!(direction= reader.readLine()).equalsIgnoreCase("Exit")) {
             field[TPos[0]][TPos[1]] = " T ";
             int cubeValue = rollCube();
             System.out.println("Направление");
@@ -28,7 +29,8 @@ public class snake {
             move(cubeValue, direction);
             if (TPos[0] == currentPosition[0] && TPos[1] == currentPosition[1]) {
                 field[currentPosition[0]][currentPosition[1]] = " X ";
-                tx = T();
+                TPos[0] = T();
+                TPos[1] = T();
             }
             printField(field);
 
@@ -37,34 +39,31 @@ public class snake {
     }
 
     static void move(int cubeValue, String direction) {
-        int fl = field.length;
         int oldVertical = currentPosition[0];
         int oldHorizontal = currentPosition[1];
-        int oTVertical = TPos[0];
-        int oTHorizontal = TPos[1];
         field[oldVertical][oldHorizontal] = " . ";
 
         if (direction.equalsIgnoreCase("right")) {
             oldHorizontal = currentPosition[1] + cubeValue;
-            if (oldHorizontal > fl - 1) currentPosition[1] = oldHorizontal - fl;
+            if (oldHorizontal > field.length - 1) currentPosition[1] = oldHorizontal - field.length;
             else currentPosition[1] = oldHorizontal;
             field[currentPosition[0]][currentPosition[1]] = " o ";
         }
         if (direction.equalsIgnoreCase("down")) {
             oldVertical = currentPosition[0] + cubeValue;
-            if (oldVertical > fl - 1) currentPosition[0] = oldVertical - fl;
+            if (oldVertical > field.length - 1) currentPosition[0] = oldVertical - field.length;
             else currentPosition[0] = oldVertical;
             field[currentPosition[0]][currentPosition[1]] = " o ";
         }
         if (direction.equalsIgnoreCase("up")) {
             oldVertical = currentPosition[0] - cubeValue;
-            if (oldVertical < 0) currentPosition[0] = oldVertical + fl;
+            if (oldVertical < 0) currentPosition[0] = oldVertical + field.length;
             else currentPosition[0] = oldVertical;
             field[currentPosition[0]][currentPosition[1]] = " o ";
         }
         if (direction.equalsIgnoreCase("left")) {
             oldHorizontal = currentPosition[1] - cubeValue;
-            if (oldHorizontal < 0) currentPosition[1] = oldHorizontal + fl;
+            if (oldHorizontal < 0) currentPosition[1] = oldHorizontal + field.length;
             else currentPosition[1] = oldHorizontal;
             field[currentPosition[0]][currentPosition[1]] = " o ";
         }
@@ -79,28 +78,22 @@ public class snake {
 
     static int T() {
         Random rnd = new Random();
-        int tx = rnd.nextInt(field.length);
-        System.out.println(tx);
-        TPos[0] = tx;
-        TPos[1] = tx;
-        return tx;
+        return rnd.nextInt(field.length);
     }
 
     static String[][] buildField(int width, int height) {
         String[][] field = new String[height][width];
-        for (int i = 0; i < field.length; i++) {
-            for (int j = 0; j < field[i].length; j++) {
-                field[i][j] = " . ";
-            }
+        for (String[] strings : field) {
+            Arrays.fill(strings, " . ");
         }
         field[0][0] = " o ";
         return field;
     }
 
     static void printField(String[][] field) {
-        for (int i = 0; i < field.length; i++) {
-            for (int j = 0; j < field[i].length; j++) {
-                System.out.print(field[i][j]);
+        for (String[] strings : field) {
+            for (String string : strings) {
+                System.out.print(string);
             }
             System.out.println();
         }
